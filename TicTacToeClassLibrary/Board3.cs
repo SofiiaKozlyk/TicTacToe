@@ -10,10 +10,10 @@ namespace TicTacToeClassLibrary
     {
         public Board3()
         {
-            this.Lattice = new char[,] { 
-                { '1', '2', '3' }, 
-                { '4', '5', '6' }, 
-                { '7', '8', '9' } };
+            this.Lattice = new string[,] { 
+                { "1", "2", "3" }, 
+                { "4", "5", "6" }, 
+                { "7", "8", "9" } };
         }
         public override void Print()
         {
@@ -27,6 +27,5 @@ namespace TicTacToeClassLibrary
                 Console.WriteLine("\n--- --- ---");
             }
         }
-
     }
 }
