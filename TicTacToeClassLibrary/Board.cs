@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace TicTacToeClassLibrary
 {
-    public class Board
+    public abstract class Board
     {
-
+        public char[,] Lattice { get; set; }
+        public abstract void Print();
     }
 }
