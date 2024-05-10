@@ -77,6 +77,16 @@ namespace TicTacToeClassLibrary
 
         public bool CheckWinning()
         {
+            if(CheckRows() || CheckCols() || CheckDiagonals())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool CheckRows()
+        {
             bool allSame = true;
 
             for (int row = 0; row < TicTacToeBoard.Lattice.GetLength(0); row++)
@@ -99,10 +109,15 @@ namespace TicTacToeClassLibrary
                     return true;
                 }
             }
+            return false;
+        }
+        public bool CheckCols()
+        {
+            bool allSame = true;
 
             for (int col = 0; col < TicTacToeBoard.Lattice.GetLength(1); col++)
             {
-                string firstChar = TicTacToeBoard.Lattice[0, col]; 
+                string firstChar = TicTacToeBoard.Lattice[0, col];
 
                 allSame = true;
 
@@ -111,7 +126,7 @@ namespace TicTacToeClassLibrary
                     if (TicTacToeBoard.Lattice[row, col] != firstChar)
                     {
                         allSame = false;
-                        break; 
+                        break;
                     }
                 }
 
@@ -121,12 +136,18 @@ namespace TicTacToeClassLibrary
                 }
             }
 
-            int size = TicTacToeBoard.Lattice.GetLength(0); 
+            return false;
+        }
+        public bool CheckDiagonals()
+        {
+            bool allSame = true;
+
+            int size = TicTacToeBoard.Lattice.GetLength(0);
 
             // перший елемент головної діагоналі
             string mainDiagonalElement = TicTacToeBoard.Lattice[0, 0];
             // перший елемент побічної діагоналі
-            string sideDiagonalElement = TicTacToeBoard.Lattice[0, size - 1]; 
+            string sideDiagonalElement = TicTacToeBoard.Lattice[0, size - 1];
 
             allSame = true;
 
@@ -135,7 +156,7 @@ namespace TicTacToeClassLibrary
                 if (TicTacToeBoard.Lattice[i, i] != mainDiagonalElement)
                 {
                     allSame = false;
-                    break; 
+                    break;
                 }
             }
             if (allSame)
@@ -144,13 +165,13 @@ namespace TicTacToeClassLibrary
             }
 
             allSame = true;
-            
+
             for (int i = 1; i < size; i++)
             {
                 if (TicTacToeBoard.Lattice[i, size - 1 - i] != sideDiagonalElement)
                 {
                     allSame = false;
-                    break; 
+                    break;
                 }
             }
             if (allSame)
@@ -160,6 +181,7 @@ namespace TicTacToeClassLibrary
 
             return false;
         }
+
 
     }
 }
