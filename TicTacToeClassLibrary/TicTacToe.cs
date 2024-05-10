@@ -34,17 +34,45 @@ namespace TicTacToeClassLibrary
                 throw new Exception("There is no cell with this position.");
             }
         }
+
         public void Play()
         {
             while (true)
             {
                 WriteSign(int.Parse(Console.ReadLine()));
-                if (CheckWinning())
+                if (IsRoundEnd())
                 {
-                    Console.WriteLine("Win");
                     break;
                 }
             }
+        }
+
+        public bool IsRoundEnd()
+        {
+            if (CheckWinning())
+            {
+                Console.WriteLine("Win");
+                return true;
+            }
+            if (HasNoNumericElement())
+            {
+                Console.WriteLine("Game draw");
+                return true;
+            }
+
+            return false;
+        }
+        public bool HasNoNumericElement()
+        {
+            foreach (var element in TicTacToeBoard.Lattice)
+            {
+                if (int.TryParse(element, out _))
+                {
+                    return false;
+                }
+            }
+
+            return true; 
         }
 
         public bool CheckWinning()
