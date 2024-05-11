@@ -8,7 +8,7 @@ namespace TicTacToeClassLibrary
 {
     public class TicTacToe
     {
-        private List<IMemento> _mementos = new List<IMemento>();
+        private List<IMemento> _mementos;
         private ICreateBoard _createBoard;
         public Board TicTacToeBoard { get; set; }
         public Player Player1 { get; set; }
@@ -18,8 +18,10 @@ namespace TicTacToeClassLibrary
         {
             _createBoard = new CreateBoard();
             TicTacToeBoard = Create();
-            Player1 = new Player("1", "x", 0);
-            Player2 = new Player("2", "o", 0);
+            Console.WriteLine("Enter the name of the first player: ");
+            Player1 = new Player(Console.ReadLine(), "x", 0);
+            Console.WriteLine("Enter the name of the second player: ");
+            Player2 = new Player(Console.ReadLine(), "o", 0);
             CurrentPlayer = Player1;
             PrintGameInfo();
         }
@@ -48,6 +50,7 @@ namespace TicTacToeClassLibrary
             Console.WriteLine("Please select a board type (3x3, 4x4)");
             string boardType = Console.ReadLine();
             Board board = _createBoard.Create(boardType);
+            _mementos = new List<IMemento>();
             return board;
         }
 
@@ -62,7 +65,14 @@ namespace TicTacToeClassLibrary
                         Undo();
                         break;
                     default:
-                        WriteSign(int.Parse(input));
+                        try
+                        {
+                            WriteSign(int.Parse(input));
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message + " Press any key to continue...");
+                        }
                         break;
                 }
                 if (IsRoundEnd())
@@ -74,6 +84,9 @@ namespace TicTacToeClassLibrary
                         PrintGameInfo();
                         continue;
                     }
+                    Console.Clear();
+                    Player1.PrintPlayerInfo();
+                    Player2.PrintPlayerInfo();
                     break;
                 }
             }
@@ -102,7 +115,7 @@ namespace TicTacToeClassLibrary
             Console.Clear();
             Player1.PrintPlayerInfo();
             Player2.PrintPlayerInfo();
-            Console.WriteLine($"It's {CurrentPlayer.Name}'s turn. Please select an empty cell");
+            Console.WriteLine($"It's {CurrentPlayer.Name}'s turn. Please select an empty cell (u - Undo)");
             TicTacToeBoard.Print();
         }
 
@@ -123,6 +136,7 @@ namespace TicTacToeClassLibrary
 
             return false;
         }
+
         public bool HasNoNumericElement()
         {
             foreach (var element in TicTacToeBoard.Lattice)
@@ -242,7 +256,5 @@ namespace TicTacToeClassLibrary
 
             return false;
         }
-
-
     }
 }
