@@ -23,7 +23,7 @@ namespace TicTacToeClassLibrary
                 throw new Exception("The cell is already occupied. Please choose another.");
             }
         }
-        public IMemento makeSnapshot()
+        public IMemento MakeSnapshot()
         {
             return new BoardMemento(Lattice);
         }

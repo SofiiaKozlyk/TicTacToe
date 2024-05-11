@@ -9,14 +9,14 @@ namespace TicTacToeClassLibrary
     public class TicTacToe
     {
         private List<IMemento> _mementos;
-        private ICreateBoard _createBoard;
+        private IBoardFactory _boardFactory;
         public Board TicTacToeBoard { get; set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
         public Player CurrentPlayer { get; set; }
         public TicTacToe()
         {
-            _createBoard = new CreateBoard();
+            _boardFactory = new BoardFactory();
             TicTacToeBoard = Create();
             Console.WriteLine("Enter the name of the first player: ");
             Player1 = new Player(Console.ReadLine(), "x", 0);
@@ -49,7 +49,7 @@ namespace TicTacToeClassLibrary
         {
             Console.WriteLine("Please select a board type (3x3, 4x4)");
             string boardType = Console.ReadLine();
-            Board board = _createBoard.Create(boardType);
+            Board board = _boardFactory.Create(boardType);
             _mementos = new List<IMemento>();
             return board;
         }
@@ -94,7 +94,7 @@ namespace TicTacToeClassLibrary
 
         public void Save()
         {
-            _mementos.Add(TicTacToeBoard.makeSnapshot());
+            _mementos.Add(TicTacToeBoard.MakeSnapshot());
         }
         public void Undo()
         {
@@ -137,7 +137,7 @@ namespace TicTacToeClassLibrary
             return false;
         }
 
-        public bool HasNoNumericElement()
+        protected bool HasNoNumericElement()
         {
             foreach (var element in TicTacToeBoard.Lattice)
             {
@@ -150,7 +150,7 @@ namespace TicTacToeClassLibrary
             return true; 
         }
 
-        public bool CheckWinning()
+        protected bool CheckWinning()
         {
             if(CheckRows() || CheckCols() || CheckDiagonals())
             {
@@ -160,7 +160,7 @@ namespace TicTacToeClassLibrary
             return false;
         }
 
-        public bool CheckRows()
+        protected bool CheckRows()
         {
             bool allSame = true;
 
@@ -186,7 +186,7 @@ namespace TicTacToeClassLibrary
             }
             return false;
         }
-        public bool CheckCols()
+        protected bool CheckCols()
         {
             bool allSame = true;
 
@@ -213,7 +213,7 @@ namespace TicTacToeClassLibrary
 
             return false;
         }
-        public bool CheckDiagonals()
+        protected bool CheckDiagonals()
         {
             bool allSame = true;
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TicTacToeClassLibrary
 {
-    public interface ICreateBoard
+    public interface IBoardFactory
     {
         public Board Create(string board);
     }
