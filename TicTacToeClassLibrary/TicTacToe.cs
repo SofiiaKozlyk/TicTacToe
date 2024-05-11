@@ -9,13 +9,15 @@ namespace TicTacToeClassLibrary
     public class TicTacToe
     {
         private List<IMemento> _mementos = new List<IMemento>();
+        private ICreateBoard _createBoard;
         public Board TicTacToeBoard { get; set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
         public Player CurrentPlayer { get; set; }
         public TicTacToe()
         {
-            TicTacToeBoard = new Board3();
+            _createBoard = new CreateBoard();
+            TicTacToeBoard = Create();
             Player1 = new Player("1", "x", 0);
             Player2 = new Player("2", "o", 0);
             CurrentPlayer = Player1;
@@ -41,6 +43,14 @@ namespace TicTacToeClassLibrary
             }
         }
 
+        public Board Create()
+        {
+            Console.WriteLine("Please select a board type (3x3, 4x4)");
+            string boardType = Console.ReadLine();
+            Board board = _createBoard.Create(boardType);
+            return board;
+        }
+
         public void Play()
         {
             while (true)
@@ -57,6 +67,13 @@ namespace TicTacToeClassLibrary
                 }
                 if (IsRoundEnd())
                 {
+                    Console.WriteLine("Do you want to play again? (y/n)");
+                    if (Console.ReadLine() == "y")
+                    {
+                        TicTacToeBoard = Create();
+                        PrintGameInfo();
+                        continue;
+                    }
                     break;
                 }
             }
