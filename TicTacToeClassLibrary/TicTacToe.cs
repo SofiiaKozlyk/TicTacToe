@@ -9,25 +9,29 @@ namespace TicTacToeClassLibrary
     public class TicTacToe
     {
         public Board TicTacToeBoard { get; set; }
-        public string CurrentPlayer { get; set; }
+        public Player Player1 { get; set; }
+        public Player Player2 { get; set; }
+        public Player CurrentPlayer { get; set; }
         public TicTacToe()
         {
             TicTacToeBoard = new Board3();
-            CurrentPlayer = "x";
-            TicTacToeBoard.Print();
+            Player1 = new Player("1", "x", 0);
+            Player2 = new Player("2", "o", 0);
+            CurrentPlayer = Player1;
+            PrintGameInfo();
         }
         public void SwitchCurrentPlayer()
         {
-            CurrentPlayer = CurrentPlayer == "x" ? "o" : "x";
+            CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
         }
 
         public void WriteSign(int position)
         {
             if(position > 0 && position <= TicTacToeBoard.Lattice.GetLength(0) * TicTacToeBoard.Lattice.GetLength(0))
             {
-                TicTacToeBoard.WriteSign(position, CurrentPlayer);
+                TicTacToeBoard.WriteSign(position, CurrentPlayer.Sign);
                 SwitchCurrentPlayer();
-                TicTacToeBoard.Print();
+                PrintGameInfo();
             }
             else
             {
@@ -47,11 +51,22 @@ namespace TicTacToeClassLibrary
             }
         }
 
+        public void PrintGameInfo()
+        {
+            Console.Clear();
+            Player1.PrintPlayerInfo();
+            Player2.PrintPlayerInfo();
+            Console.WriteLine($"It's {CurrentPlayer.Name}'s turn. Please select an empty cell");
+            TicTacToeBoard.Print();
+        }
+
         public bool IsRoundEnd()
         {
             if (CheckWinning())
             {
-                Console.WriteLine("Win");
+                Player winner = CurrentPlayer == Player1 ? Player2 : Player1;
+                winner.Score++;
+                Console.WriteLine($"{winner.Name} wins");
                 return true;
             }
             if (HasNoNumericElement())
