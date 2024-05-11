@@ -8,6 +8,7 @@ namespace TicTacToeClassLibrary
 {
     public class TicTacToe
     {
+        private List<IMemento> _mementos = new List<IMemento>();
         public Board TicTacToeBoard { get; set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
@@ -29,6 +30,7 @@ namespace TicTacToeClassLibrary
         {
             if(position > 0 && position <= TicTacToeBoard.Lattice.GetLength(0) * TicTacToeBoard.Lattice.GetLength(0))
             {
+                Save();
                 TicTacToeBoard.WriteSign(position, CurrentPlayer.Sign);
                 SwitchCurrentPlayer();
                 PrintGameInfo();
@@ -43,12 +45,39 @@ namespace TicTacToeClassLibrary
         {
             while (true)
             {
-                WriteSign(int.Parse(Console.ReadLine()));
+                string input = Console.ReadLine();
+                switch (input)
+                {
+                    case "u":
+                        Undo();
+                        break;
+                    default:
+                        WriteSign(int.Parse(input));
+                        break;
+                }
                 if (IsRoundEnd())
                 {
                     break;
                 }
             }
+        }
+
+        public void Save()
+        {
+            _mementos.Add(TicTacToeBoard.makeSnapshot());
+        }
+        public void Undo()
+        {
+            if (_mementos.Count == 0)
+            {
+                Console.WriteLine("Undo: No previous content saved.");
+                return;
+            }
+            var memento = _mementos.Last();
+            _mementos.Remove(memento);
+            TicTacToeBoard.Restore(memento);
+            SwitchCurrentPlayer();
+            PrintGameInfo();
         }
 
         public void PrintGameInfo()

@@ -23,5 +23,18 @@ namespace TicTacToeClassLibrary
                 throw new Exception("The cell is already occupied. Please choose another.");
             }
         }
+        public IMemento makeSnapshot()
+        {
+            return new BoardMemento(Lattice);
+        }
+        public void Restore(IMemento memento)
+        {
+            if (!(memento is BoardMemento))
+            {
+                throw new Exception("Unknown memento class " + memento.ToString());
+            }
+
+            Lattice = memento.GetState();
+        }
     }
 }
