@@ -9,7 +9,33 @@ namespace TicTacToeClassLibrary
     public abstract class Board
     {
         public string[,] Lattice { get; set; }
-        public abstract void Print();
+        //метод виведення змісту
+        public void Print() 
+        {
+            int sideSize = this.Lattice.GetLength(0);
+
+            for (int i = 0; i < sideSize; i++)
+            {
+                for (int j = 0; j < sideSize; j++)
+                {
+                    Console.Write(this.Lattice[i, j]);
+                    Console.Write(" | ");
+                }
+                Console.WriteLine();
+
+                for (int k = 0; k < sideSize; k++)
+                {
+                    for (int l = 0; l < sideSize; l++)
+                    {
+                        Console.Write("-");
+                    }
+                    Console.Write(" ");
+                }
+                Console.WriteLine();
+            }
+        }
+        
+        
         public void WriteSign(int position, string sign)
         {
             int rowIndex = --position / Lattice.GetLength(0);

@@ -16,17 +16,6 @@ namespace TicTacToeClassLibrary
                 { "09", "10", "11", "12" },
                 { "13", "14", "15", "16" } };
         }
-        public override void Print()
-        {
-            for (int i = 0; i < this.Lattice.GetLength(0); i++)
-            {
-                for (int j = 0; j < this.Lattice.GetLength(1); j++)
-                {
-                    Console.Write(this.Lattice[i, j]);
-                    Console.Write(" | ");
-                }
-                Console.WriteLine("\n--- ---  ---  ---");
-            }
-        }
+        
     }
 }
