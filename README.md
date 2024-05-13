@@ -14,7 +14,7 @@ We have small interfaces that have only the necessary methods and that can be im
 ## KISS
 Classes and methods are simple and focused on a single responsibility. They only have basic, simple and necessary methods for the game.
 ## Fail Fast
-The [WriteSign(int position) method](./TicTacToeClassLibrary/TicTacToe.cs#L33-L46) of the TicTacToeBoard class and the [WriteSign(int position, string sign) method](./TicTacToeClassLibrary/Board.cs#L13-L25) of the Board class have checks for the correct functioning of the game. If these checks don't pass, an Exception is generated with a description of the error.
+The [WriteSign(int position) method](./TicTacToeClassLibrary/TicTacToe.cs#L33-L46) of the TicTacToeBoard class and the [WriteSign(int position, string sign) method](./TicTacToeClassLibrary/Board.cs#L39-L51) of the Board class have checks for the correct functioning of the game. If these checks don't pass, an Exception is generated with a description of the error.
 
 # Design Patterns
 
