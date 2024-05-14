@@ -83,31 +83,18 @@ namespace TicTacToeClassLibrary
                 }
                 if (IsRoundEnd())
                 {
-                    HandleRoundEnd();
+                    Console.WriteLine("Do you want to play again? (y/n)");
+                    if (Console.ReadLine() == "y")
+                    {
+                        TicTacToeBoard = Create();
+                        PrintGameInfo();
+                        continue;
+                    }
+                    Console.Clear();
+                    Player1.PrintPlayerInfo();
+                    Player2.PrintPlayerInfo();
                     break;
                 }
-            }
-        }
-
-        private void HandleRoundEnd()
-        {
-            Console.WriteLine("Do you want to play again? (y/n)");
-            string input = Console.ReadLine().ToLower();
-            if (input == "y")
-            {
-                TicTacToeBoard = Create();
-                PrintGameInfo();
-            }
-            else if (input == "n")
-            {
-                Console.Clear();
-                Player1.PrintPlayerInfo();
-                Player2.PrintPlayerInfo();
-            }
-            else
-            {
-                Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
-                HandleRoundEnd();
             }
         }
 
