@@ -53,7 +53,11 @@ namespace TicTacToeClassLibrary
             _mementos = new List<IMemento>();
             return board;
         }
-
+        public void PrintPlayersInfo()
+        {
+            Player1.PrintPlayerInfo();
+            Player2.PrintPlayerInfo();
+        }
         public void Play()
         {
             while (true)
@@ -85,8 +89,7 @@ namespace TicTacToeClassLibrary
                         continue;
                     }
                     Console.Clear();
-                    Player1.PrintPlayerInfo();
-                    Player2.PrintPlayerInfo();
+                    PrintPlayersInfo();
                     break;
                 }
             }
@@ -113,8 +116,7 @@ namespace TicTacToeClassLibrary
         public void PrintGameInfo()
         {
             Console.Clear();
-            Player1.PrintPlayerInfo();
-            Player2.PrintPlayerInfo();
+            PrintPlayersInfo();
             Console.WriteLine($"It's {CurrentPlayer.Name}'s turn. Please select an empty cell (u - Undo)");
             TicTacToeBoard.Print();
         }
@@ -159,102 +161,80 @@ namespace TicTacToeClassLibrary
 
             return false;
         }
+        
+        protected bool CheckLine(int start, int step, bool checkRows)
+        {
+            bool allSame = true;
+
+            for (int i = start; checkRows ? (i < TicTacToeBoard.Lattice.GetLength(0)) : (i < TicTacToeBoard.Lattice.GetLength(1)); i += step)
+            {
+                string firstChar = checkRows ? TicTacToeBoard.Lattice[i, 0] : TicTacToeBoard.Lattice[0, i];
+
+                allSame = true;
+
+                for (int j = 1; checkRows ? (j < TicTacToeBoard.Lattice.GetLength(1)) : (j < TicTacToeBoard.Lattice.GetLength(0)); j++)
+                {
+                    if (checkRows)
+                    {
+                        if (TicTacToeBoard.Lattice[i, j] != firstChar)
+                        {
+                            allSame = false;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (TicTacToeBoard.Lattice[j, i] != firstChar)
+                        {
+                            allSame = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (allSame)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         protected bool CheckRows()
         {
-            bool allSame = true;
-
-            for (int row = 0; row < TicTacToeBoard.Lattice.GetLength(0); row++)
-            {
-                string firstChar = TicTacToeBoard.Lattice[row, 0];
-
-                allSame = true;
-
-                for (int col = 1; col < TicTacToeBoard.Lattice.GetLength(1); col++)
-                {
-                    if (TicTacToeBoard.Lattice[row, col] != firstChar)
-                    {
-                        allSame = false;
-                        break;
-                    }
-                }
-
-                if (allSame)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return CheckLine(0, 1, true);
         }
+
         protected bool CheckCols()
         {
-            bool allSame = true;
-
-            for (int col = 0; col < TicTacToeBoard.Lattice.GetLength(1); col++)
-            {
-                string firstChar = TicTacToeBoard.Lattice[0, col];
-
-                allSame = true;
-
-                for (int row = 1; row < TicTacToeBoard.Lattice.GetLength(0); row++)
-                {
-                    if (TicTacToeBoard.Lattice[row, col] != firstChar)
-                    {
-                        allSame = false;
-                        break;
-                    }
-                }
-
-                if (allSame)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return CheckLine(0, 1, false);
         }
+
         protected bool CheckDiagonals()
         {
-            bool allSame = true;
-
             int size = TicTacToeBoard.Lattice.GetLength(0);
 
-            // перший елемент головної діагоналі
-            string mainDiagonalElement = TicTacToeBoard.Lattice[0, 0];
-            // перший елемент побічної діагоналі
-            string sideDiagonalElement = TicTacToeBoard.Lattice[0, size - 1];
-
-            allSame = true;
-
-            for (int i = 1; i < size; i++)
-            {
-                if (TicTacToeBoard.Lattice[i, i] != mainDiagonalElement)
-                {
-                    allSame = false;
-                    break;
-                }
-            }
-            if (allSame)
-            {
-                return true;
-            }
-
-            allSame = true;
-
-            for (int i = 1; i < size; i++)
-            {
-                if (TicTacToeBoard.Lattice[i, size - 1 - i] != sideDiagonalElement)
-                {
-                    allSame = false;
-                    break;
-                }
-            }
-            if (allSame)
+            if (CheckDiagonal(0, 0, 1, 1, size) || CheckDiagonal(0, size - 1, 1, -1, size))
             {
                 return true;
             }
 
             return false;
         }
+
+        private bool CheckDiagonal(int startX, int startY, int stepX, int stepY, int size)
+        {
+            string firstElement = TicTacToeBoard.Lattice[startX, startY];
+            for (int i = 1; i < size; i++)
+            {
+                if (TicTacToeBoard.Lattice[startX + i * stepX, startY + i * stepY] != firstElement)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
     }
 }
