@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,10 +31,16 @@ namespace TicTacToeClassLibrary
             CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
         }
 
+        private int lastRow;
+        private int lastCol;
+
         public void WriteSign(int position)
         {
-            if(position > 0 && position <= TicTacToeBoard.Lattice.GetLength(0) * TicTacToeBoard.Lattice.GetLength(0))
+            if (position > 0 && position <= TicTacToeBoard.Lattice.GetLength(0) * TicTacToeBoard.Lattice.GetLength(0))
             {
+                lastRow = (position - 1) / TicTacToeBoard.Lattice.GetLength(0);
+                lastCol = (position - 1) % TicTacToeBoard.Lattice.GetLength(1);
+
                 Save();
                 TicTacToeBoard.WriteSign(position, CurrentPlayer.Sign);
                 SwitchCurrentPlayer();
@@ -77,19 +84,33 @@ namespace TicTacToeClassLibrary
                 }
                 if (IsRoundEnd())
                 {
-                    Console.WriteLine("Do you want to play again? (y/n)");
-                    if (Console.ReadLine() == "y")
-                    {
-                        TicTacToeBoard = Create();
-                        PrintGameInfo();
-                        continue;
-                    }
-                    Console.Clear();
-                    Player1.PrintPlayerInfo();
-                    Player2.PrintPlayerInfo();
-                    break;
+                    HandleRoundEnd();
+                    if (!AskForNewGame())
+                        break;
                 }
             }
+        }
+        private void HandleRoundEnd()
+        {
+            Console.WriteLine("Do you want to play again? (y/n)");
+            if (Console.ReadLine() == "y")
+            {
+                TicTacToeBoard = Create();
+                PrintGameInfo();
+            }
+            else
+            {
+                Console.Clear();
+                Player1.PrintPlayerInfo();
+                Player2.PrintPlayerInfo();
+            }
+        }
+        private bool AskForNewGame()
+        {
+            Console.Clear();
+            TicTacToeBoard = Create();
+            PrintGameInfo();
+            return true;
         }
 
         public void Save()
@@ -121,7 +142,7 @@ namespace TicTacToeClassLibrary
 
         public bool IsRoundEnd()
         {
-            if (CheckWinning())
+            if (CheckWinning(lastRow, lastCol))
             {
                 Player winner = CurrentPlayer == Player1 ? Player2 : Player1;
                 winner.Score++;
@@ -147,114 +168,65 @@ namespace TicTacToeClassLibrary
                 }
             }
 
-            return true; 
+            return true;
+        }
+        protected bool CheckWinning(int lastRow, int lastCol)
+        {
+            return CheckRow(lastRow) || CheckColumn(lastCol) ||
+                   (lastRow == lastCol && CheckMainDiagonal()) ||
+                   (lastRow + lastCol == TicTacToeBoard.Lattice.GetLength(0) - 1 && CheckSideDiagonal());
         }
 
-        protected bool CheckWinning()
+        private bool CheckRow(int row)
         {
-            if(CheckRows() || CheckCols() || CheckDiagonals())
+            string firstElement = TicTacToeBoard.Lattice[row, 0];
+            for (int col = 1; col < TicTacToeBoard.Lattice.GetLength(1); col++)
             {
-                return true;
+                if (TicTacToeBoard.Lattice[row, col] != firstElement)
+                {
+                    return false;
+                }
             }
-
-            return false;
+            return true;
         }
 
-        protected bool CheckRows()
+        private bool CheckColumn(int col)
         {
-            bool allSame = true;
-
-            for (int row = 0; row < TicTacToeBoard.Lattice.GetLength(0); row++)
+            string firstElement = TicTacToeBoard.Lattice[0, col];
+            for (int row = 1; row < TicTacToeBoard.Lattice.GetLength(0); row++)
             {
-                string firstChar = TicTacToeBoard.Lattice[row, 0];
-
-                allSame = true;
-
-                for (int col = 1; col < TicTacToeBoard.Lattice.GetLength(1); col++)
+                if (TicTacToeBoard.Lattice[row, col] != firstElement)
                 {
-                    if (TicTacToeBoard.Lattice[row, col] != firstChar)
-                    {
-                        allSame = false;
-                        break;
-                    }
-                }
-
-                if (allSame)
-                {
-                    return true;
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
-        protected bool CheckCols()
+
+        private bool CheckMainDiagonal()
         {
-            bool allSame = true;
-
-            for (int col = 0; col < TicTacToeBoard.Lattice.GetLength(1); col++)
+            string firstElement = TicTacToeBoard.Lattice[0, 0];
+            for (int i = 1; i < TicTacToeBoard.Lattice.GetLength(0); i++)
             {
-                string firstChar = TicTacToeBoard.Lattice[0, col];
-
-                allSame = true;
-
-                for (int row = 1; row < TicTacToeBoard.Lattice.GetLength(0); row++)
+                if (TicTacToeBoard.Lattice[i, i] != firstElement)
                 {
-                    if (TicTacToeBoard.Lattice[row, col] != firstChar)
-                    {
-                        allSame = false;
-                        break;
-                    }
-                }
-
-                if (allSame)
-                {
-                    return true;
+                    return false;
                 }
             }
-
-            return false;
+            return true;
         }
-        protected bool CheckDiagonals()
+
+        private bool CheckSideDiagonal()
         {
-            bool allSame = true;
-
-            int size = TicTacToeBoard.Lattice.GetLength(0);
-
-            // перший елемент головної діагоналі
-            string mainDiagonalElement = TicTacToeBoard.Lattice[0, 0];
-            // перший елемент побічної діагоналі
-            string sideDiagonalElement = TicTacToeBoard.Lattice[0, size - 1];
-
-            allSame = true;
-
-            for (int i = 1; i < size; i++)
+            string firstElement = TicTacToeBoard.Lattice[0, TicTacToeBoard.Lattice.GetLength(0) - 1];
+            for (int i = 1; i < TicTacToeBoard.Lattice.GetLength(0); i++)
             {
-                if (TicTacToeBoard.Lattice[i, i] != mainDiagonalElement)
+                if (TicTacToeBoard.Lattice[i, TicTacToeBoard.Lattice.GetLength(0) - 1 - i] != firstElement)
                 {
-                    allSame = false;
-                    break;
+                    return false;
                 }
             }
-            if (allSame)
-            {
-                return true;
-            }
-
-            allSame = true;
-
-            for (int i = 1; i < size; i++)
-            {
-                if (TicTacToeBoard.Lattice[i, size - 1 - i] != sideDiagonalElement)
-                {
-                    allSame = false;
-                    break;
-                }
-            }
-            if (allSame)
-            {
-                return true;
-            }
-
-            return false;
+            return true;
         }
     }
 }
