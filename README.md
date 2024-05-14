@@ -21,7 +21,7 @@ The [WriteSign(int position) method](./TicTacToeClassLibrary/TicTacToe.cs#L33-L4
 ## Factory Method
 The [BoardFactory](./TicTacToeClassLibrary/BoardFactory.cs) factory class has a Create method that, depending on the value passed, returns a 3x3 or 4x4 board.
 ## Memento
-Used to store a list of board states and for the ability to revert to a previous state (i.e. cancel a player's move). Implemented in IMemento interface, BoardMemento, Board (MakeSnapshot and Restore methods), [TicTacToe (Save and Undo methods)](./TicTacToeClassLibrary/TicTacToe.cs#L95-L111) classes.
+Used to store a list of board states and for the ability to revert to a previous state (i.e. cancel a player's move). Implemented in IMemento interface, BoardMemento, Board (MakeSnapshot and Restore methods), [TicTacToe (Save and Undo methods)](./TicTacToeClassLibrary/TicTacToe.cs#L98-L114) classes.
 ## Command
 The TicTacToe class has a WriteSign method that performs certain checks, and if they pass, it calls the Board class's WriteSign method, which adds the player's sign to the board.
 
@@ -34,6 +34,6 @@ Separation of checks of winning combinations into [CheckRows](https://github.com
 ## Hide Method
 In the TicTacToe class methods not used by other classes have been made protected.
 ## Consolidate Conditional Expression
-Used in the [CheckWinning method](./TicTacToeClassLibrary/TicTacToe.cs#L155-L158).
+Used in the [CheckWinning method](./TicTacToeClassLibrary/TicTacToe.cs#L157-L160).
 ## Replace Data Value with Object
 The [CurrentPlayer](https://github.com/SofiiaKozlyk/TicTacToe/commit/ecaff0978d1b8531efd10b689c88b082d857b7e6#diff-45e7f450b361f69ac8f625ec936929e2c84cdbfc4aa2c2abe1bd95386efaabf6) field used to be of type string and stored the sign of the player, now it is of type Player and stores an object.
