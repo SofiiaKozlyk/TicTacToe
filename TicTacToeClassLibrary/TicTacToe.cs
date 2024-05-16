@@ -1,38 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TicTacToeClassLibrary
+﻿namespace TicTacToeClassLibrary
 {
     public class TicTacToe
     {
-        private List<IMemento> _mementos;
-        private IBoardFactory _boardFactory;
+        private readonly List<IMemento> _mementos;
+        private readonly IBoardFactory _boardFactory;
+
         public Board TicTacToeBoard { get; set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
         public Player CurrentPlayer { get; set; }
+
         public TicTacToe()
         {
             _boardFactory = new BoardFactory();
-            TicTacToeBoard = Create();
-            Console.WriteLine("Enter the name of the first player: ");
-            Player1 = new Player(Console.ReadLine(), "x", 0);
-            Console.WriteLine("Enter the name of the second player: ");
-            Player2 = new Player(Console.ReadLine(), "o", 0);
+            _mementos = new List<IMemento>();
+
+            TicTacToeBoard = CreateBoard();
+            InitializePlayers();
             CurrentPlayer = Player1;
             PrintGameInfo();
         }
-        public void SwitchCurrentPlayer()
+
+        private Board CreateBoard()
         {
-            CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
+            Console.WriteLine("Please select a board type (3x3, 4x4)");
+            string boardType = Console.ReadLine();
+            return _boardFactory.Create(boardType);
         }
+
+        private void InitializePlayers()
+        {
+            Console.WriteLine("Enter the name of the first player: ");
+            Player1 = new Player(Console.ReadLine(), "x", 0);
+
+            Console.WriteLine("Enter the name of the second player: ");
+            Player2 = new Player(Console.ReadLine(), "o", 0);
+        }
+
+        public void SwitchCurrentPlayer() => CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
 
         public void WriteSign(int position)
         {
-            if(position > 0 && position <= TicTacToeBoard.Lattice.GetLength(0) * TicTacToeBoard.Lattice.GetLength(0))
+            if (IsValidPosition(position))
             {
                 Save();
                 TicTacToeBoard.WriteSign(position, CurrentPlayer.Sign);
@@ -45,19 +54,9 @@ namespace TicTacToeClassLibrary
             }
         }
 
-        public Board Create()
-        {
-            Console.WriteLine("Please select a board type (3x3, 4x4)");
-            string boardType = Console.ReadLine();
-            Board board = _boardFactory.Create(boardType);
-            _mementos = new List<IMemento>();
-            return board;
-        }
-        public void PrintPlayersInfo()
-        {
-            Player1.PrintPlayerInfo();
-            Player2.PrintPlayerInfo();
-        }
+        private bool IsValidPosition(int position) =>
+            position > 0 && position <= TicTacToeBoard.Lattice.GetLength(0) * TicTacToeBoard.Lattice.GetLength(0);
+
         public void Play()
         {
             while (true)
@@ -81,11 +80,9 @@ namespace TicTacToeClassLibrary
                 }
                 if (IsRoundEnd())
                 {
-                    Console.WriteLine("Do you want to play again? (y/n)");
-                    if (Console.ReadLine() == "y")
+                    if (WantsToPlayAgain())
                     {
-                        TicTacToeBoard = Create();
-                        PrintGameInfo();
+                        RestartGame();
                         continue;
                     }
                     Console.Clear();
@@ -95,11 +92,22 @@ namespace TicTacToeClassLibrary
             }
         }
 
-        public void Save()
+        private bool WantsToPlayAgain()
         {
-            _mementos.Add(TicTacToeBoard.MakeSnapshot());
+            Console.WriteLine("Do you want to play again? (y/n)");
+            return Console.ReadLine() == "y";
         }
-        public void Undo()
+
+        private void RestartGame()
+        {
+            TicTacToeBoard = CreateBoard();
+            InitializePlayers();
+            PrintGameInfo();
+        }
+
+        private void Save() => _mementos.Add(TicTacToeBoard.MakeSnapshot());
+
+        private void Undo()
         {
             if (_mementos.Count == 0)
             {
@@ -121,7 +129,13 @@ namespace TicTacToeClassLibrary
             TicTacToeBoard.Print();
         }
 
-        public bool IsRoundEnd()
+        private void PrintPlayersInfo()
+        {
+            Player1.PrintPlayerInfo();
+            Player2.PrintPlayerInfo();
+        }
+
+        private bool IsRoundEnd()
         {
             if (CheckWinning())
             {
@@ -139,38 +153,26 @@ namespace TicTacToeClassLibrary
             return false;
         }
 
-        protected bool HasNoNumericElement()
+        private bool HasNoNumericElement() =>
+            TicTacToeBoard.Lattice.Cast<string>().All(element => !int.TryParse(element, out _));
+
+        private bool CheckWinning() =>
+            CheckRows() || CheckCols() || CheckDiagonals();
+
+        private bool CheckRows() => CheckLine(0, 1, true);
+
+        private bool CheckCols() => CheckLine(0, 1, false);
+
+        private bool CheckDiagonals() =>
+            CheckDiagonal(0, 0, 1, 1, TicTacToeBoard.Lattice.GetLength(0)) ||
+            CheckDiagonal(0, TicTacToeBoard.Lattice.GetLength(0) - 1, 1, -1, TicTacToeBoard.Lattice.GetLength(0));
+
+        private bool CheckLine(int start, int step, bool checkRows)
         {
-            foreach (var element in TicTacToeBoard.Lattice)
-            {
-                if (int.TryParse(element, out _))
-                {
-                    return false;
-                }
-            }
-
-            return true; 
-        }
-
-        protected bool CheckWinning()
-        {
-            if(CheckRows() || CheckCols() || CheckDiagonals())
-            {
-                return true;
-            }
-
-            return false;
-        }
-        
-        protected bool CheckLine(int start, int step, bool checkRows)
-        {
-            bool allSame = true;
-
             for (int i = start; checkRows ? (i < TicTacToeBoard.Lattice.GetLength(0)) : (i < TicTacToeBoard.Lattice.GetLength(1)); i += step)
             {
                 string firstChar = checkRows ? TicTacToeBoard.Lattice[i, 0] : TicTacToeBoard.Lattice[0, i];
-
-                allSame = true;
+                bool allSame = true;
 
                 for (int j = 1; checkRows ? (j < TicTacToeBoard.Lattice.GetLength(1)) : (j < TicTacToeBoard.Lattice.GetLength(0)); j++)
                 {
@@ -201,28 +203,6 @@ namespace TicTacToeClassLibrary
             return false;
         }
 
-        protected bool CheckRows()
-        {
-            return CheckLine(0, 1, true);
-        }
-
-        protected bool CheckCols()
-        {
-            return CheckLine(0, 1, false);
-        }
-
-        protected bool CheckDiagonals()
-        {
-            int size = TicTacToeBoard.Lattice.GetLength(0);
-
-            if (CheckDiagonal(0, 0, 1, 1, size) || CheckDiagonal(0, size - 1, 1, -1, size))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         private bool CheckDiagonal(int startX, int startY, int stepX, int stepY, int size)
         {
             string firstElement = TicTacToeBoard.Lattice[startX, startY];
@@ -235,6 +215,5 @@ namespace TicTacToeClassLibrary
             }
             return true;
         }
-
     }
 }
