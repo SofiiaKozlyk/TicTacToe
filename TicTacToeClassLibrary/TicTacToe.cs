@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TicTacToeClassLibrary.Command;
 
 namespace TicTacToeClassLibrary
 {
@@ -123,7 +124,12 @@ namespace TicTacToeClassLibrary
 
         public bool IsRoundEnd()
         {
-            if (CheckWinning())
+            var checkers = new List<Check> { 
+                new CheckRows(TicTacToeBoard), 
+                new CheckColumns(TicTacToeBoard), 
+                new CheckDiagonals(TicTacToeBoard) };
+
+            if (new CheckWin(checkers).Win())
             {
                 Player winner = CurrentPlayer == Player1 ? Player2 : Player1;
                 winner.Score++;
@@ -151,90 +157,5 @@ namespace TicTacToeClassLibrary
 
             return true; 
         }
-
-        protected bool CheckWinning()
-        {
-            if(CheckRows() || CheckCols() || CheckDiagonals())
-            {
-                return true;
-            }
-
-            return false;
-        }
-        
-        protected bool CheckLine(int start, int step, bool checkRows)
-        {
-            bool allSame = true;
-
-            for (int i = start; checkRows ? (i < TicTacToeBoard.Lattice.GetLength(0)) : (i < TicTacToeBoard.Lattice.GetLength(1)); i += step)
-            {
-                string firstChar = checkRows ? TicTacToeBoard.Lattice[i, 0] : TicTacToeBoard.Lattice[0, i];
-
-                allSame = true;
-
-                for (int j = 1; checkRows ? (j < TicTacToeBoard.Lattice.GetLength(1)) : (j < TicTacToeBoard.Lattice.GetLength(0)); j++)
-                {
-                    if (checkRows)
-                    {
-                        if (TicTacToeBoard.Lattice[i, j] != firstChar)
-                        {
-                            allSame = false;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        if (TicTacToeBoard.Lattice[j, i] != firstChar)
-                        {
-                            allSame = false;
-                            break;
-                        }
-                    }
-                }
-
-                if (allSame)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        protected bool CheckRows()
-        {
-            return CheckLine(0, 1, true);
-        }
-
-        protected bool CheckCols()
-        {
-            return CheckLine(0, 1, false);
-        }
-
-        protected bool CheckDiagonals()
-        {
-            int size = TicTacToeBoard.Lattice.GetLength(0);
-
-            if (CheckDiagonal(0, 0, 1, 1, size) || CheckDiagonal(0, size - 1, 1, -1, size))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool CheckDiagonal(int startX, int startY, int stepX, int stepY, int size)
-        {
-            string firstElement = TicTacToeBoard.Lattice[startX, startY];
-            for (int i = 1; i < size; i++)
-            {
-                if (TicTacToeBoard.Lattice[startX + i * stepX, startY + i * stepY] != firstElement)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
     }
 }
