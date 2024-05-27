@@ -8,20 +8,16 @@ namespace TicTacToeClassLibrary.Command
 {
     public class CheckWin
     {
-        private List<Check> Checks;
-        public CheckWin(List<Check> checks) { 
-            this.Checks = checks;
+        private readonly List<Check> _checks;
+
+        public CheckWin(List<Check> checks)
+        {
+            _checks = checks ?? throw new ArgumentNullException(nameof(checks));
         }
+
         public bool Win()
         {
-            foreach (Check check in Checks)
-            {
-                if (check.PerformCheck())
-                {
-                    return true;
-                }
-            }
-            return false;
+            return _checks.Any(check => check.PerformCheck());
         }
     }
 }

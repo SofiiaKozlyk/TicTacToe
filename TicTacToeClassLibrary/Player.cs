@@ -19,7 +19,13 @@ namespace TicTacToeClassLibrary
         }
         public void PrintPlayerInfo()
         {
-            Console.WriteLine($"{Name}, Sign: {Sign}, Score: {Score}");
+            StringBuilder sb = new StringBuilder();
+            sb.Append(Name);
+            sb.Append(", Sign: ");
+            sb.Append(Sign);
+            sb.Append(", Score: ");
+            sb.Append(Score);
+            Console.WriteLine(sb.ToString());
         }
     }
 }
