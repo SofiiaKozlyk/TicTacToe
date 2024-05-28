@@ -6,7 +6,7 @@ namespace TicTacToeClassLibrary
 {
     public class TicTacToe
     {
-        private readonly List<IMemento> _mementos = new List<IMemento>();
+        private List<IMemento> _mementos;
         private readonly IBoardFactory _boardFactory;
         public Board TicTacToeBoard { get; private set; }
         public Player Player1 { get; private set; }
@@ -45,7 +45,9 @@ namespace TicTacToeClassLibrary
         {
             Console.WriteLine("Please select a board type (3x3, 4x4):");
             string boardType = Console.ReadLine();
-            return _boardFactory.Create(boardType);
+            Board board = _boardFactory.Create(boardType);
+            _mementos = new List<IMemento>();
+            return board;
         }
 
         public void InitializePlayers()
