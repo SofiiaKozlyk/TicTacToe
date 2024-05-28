@@ -156,7 +156,7 @@ namespace TicTacToeClassLibrary
 
         protected bool HasNoNumericElement()
         {
-            return !TicTacToeBoard.Lattice.Any(element => int.TryParse(element, out _));
+            return !TicTacToeBoard.Lattice.Cast<string>().Any(element => int.TryParse(element, out _));
         }
     }
 }
