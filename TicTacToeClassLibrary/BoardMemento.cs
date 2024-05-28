@@ -9,14 +9,24 @@ namespace TicTacToeClassLibrary
     public class BoardMemento : IMemento
     {
         private string[,] _state;
+
         public BoardMemento(string[,] state)
         {
-            this._state = new string[state.GetLength(0), state.GetLength(1)];
-            Array.Copy(state, this._state, state.Length);
+            _state = CopyState(state);
         }
+
         public string[,] GetState()
         {
-            return this._state;
+            return _state;
+        }
+
+        private string[,] CopyState(string[,] state)
+        {
+            int rows = state.GetLength(0);
+            int columns = state.GetLength(1);
+            string[,] copy = new string[rows, columns];
+            Array.Copy(state, copy, state.Length);
+            return copy;
         }
     }
 }
