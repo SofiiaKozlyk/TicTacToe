@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using TicTacToeClassLibrary.Boards;
 using TicTacToeClassLibrary.Command;
 
 namespace TicTacToeClassLibrary
@@ -8,6 +7,7 @@ namespace TicTacToeClassLibrary
     {
         private List<IMemento> _mementos;
         private readonly IBoardFactory _boardFactory;
+
         public Board TicTacToeBoard { get; private set; }
         public Player Player1 { get; private set; }
         public Player Player2 { get; private set; }
@@ -43,10 +43,12 @@ namespace TicTacToeClassLibrary
 
         public Board CreateBoard()
         {
-            Console.WriteLine("Please select a board type (3x3, 4x4):");
+            Console.WriteLine("Please select a board type (3x3, 4x4, 5x5):");
+
             string boardType = Console.ReadLine();
             Board board = _boardFactory.Create(boardType);
             _mementos = new List<IMemento>();
+
             return board;
         }
 
@@ -71,32 +73,36 @@ namespace TicTacToeClassLibrary
         {
             while (true)
             {
-                string input = Console.ReadLine();
-                switch (input)
+                string? input = Console.ReadLine();
+
+                if (input.Equals("u"))
                 {
-                    case "u":
-                        Undo();
-                        break;
-                    default:
-                        try
-                        {
-                            WriteSign(int.Parse(input));
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message + " Press any key to continue...");
-                        }
-                        break;
+                    Undo();
+                    continue;
                 }
+                else
+                {
+                    try
+                    {
+                        WriteSign(int.Parse(input));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message + " Input correct value please:");
+                    }
+                }
+
                 if (IsRoundEnd())
                 {
                     Console.WriteLine("Do you want to play again? (y/n)");
+
                     if (Console.ReadLine() == "y")
                     {
                         TicTacToeBoard = CreateBoard();
                         PrintGameInfo();
                         continue;
                     }
+
                     Console.Clear();
                     PrintPlayersInfo();
                     break;
@@ -116,6 +122,7 @@ namespace TicTacToeClassLibrary
                 Console.WriteLine("Undo: No previous content saved.");
                 return;
             }
+
             var memento = _mementos.Last();
             _mementos.Remove(memento);
             TicTacToeBoard.Restore(memento);
@@ -144,21 +151,23 @@ namespace TicTacToeClassLibrary
             {
                 Player winner = (CurrentPlayer == Player1) ? Player2 : Player1;
                 winner.Score++;
-                Console.WriteLine($"{winner.Name} wins");
+
+                Console.WriteLine($"{winner.Name} wins.");
+
                 return true;
             }
+
             if (HasNoNumericElement())
             {
-                Console.WriteLine("Game draw");
+                Console.WriteLine("Game draw.");
+
                 return true;
             }
 
             return false;
         }
 
-        protected bool HasNoNumericElement()
-        {
-            return !TicTacToeBoard.Lattice.Cast<string>().Any(element => int.TryParse(element, out _));
-        }
+        protected bool HasNoNumericElement() =>
+            !TicTacToeBoard.Lattice.Cast<string>().Any(element => int.TryParse(element, out _));
     }
 }

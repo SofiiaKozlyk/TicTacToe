@@ -1,6 +1,9 @@
 # Game functionality
 Players can choose the dimensions of the board (3x3, 4x4).
 Also they can undo their moves during the game. After the end of the round, you can start a new one or finish the game completely. During the game, the number of winnings of the player is counted.
+
+![Game screenshot](game.png)
+
 # Programming Principles
 
 ## Single Responsibility, SRP

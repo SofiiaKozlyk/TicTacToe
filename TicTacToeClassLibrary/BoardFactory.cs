@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TicTacToeClassLibrary.Boards;
 
 namespace TicTacToeClassLibrary
 {
@@ -12,10 +8,13 @@ namespace TicTacToeClassLibrary
         {
             switch (board)
             {
+                case "5x5":
+                case "3":
+                    return new Board5();
                 case "4x4":
                 case "2":
                     return new Board4();
-                case "3x3":                  
+                case "3x3":
                 default:
                     return new Board3();
             }

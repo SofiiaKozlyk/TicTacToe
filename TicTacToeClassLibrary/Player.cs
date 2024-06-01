@@ -1,31 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TicTacToeClassLibrary
+﻿namespace TicTacToeClassLibrary
 {
     public class Player
     {
-        public string Name { get; set; }
-        public string Sign { get; set; }
+        public string Name { get; private set; }
+        public string Sign { get; private set; }
         public int Score { get; set; }
+
         public Player(string name, string sign, int score)
         {
             Name = name;
             Sign = sign;
             Score = score;
         }
-        public void PrintPlayerInfo()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(Name);
-            sb.Append(", Sign: ");
-            sb.Append(Sign);
-            sb.Append(", Score: ");
-            sb.Append(Score);
-            Console.WriteLine(sb.ToString());
-        }
+
+        public void PrintPlayerInfo() =>
+            Console.WriteLine($"{Name}, Sign: {Sign}, Score: {Score}");
     }
 }
