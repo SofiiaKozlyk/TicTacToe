@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TicTacToeClassLibrary
+﻿namespace TicTacToeClassLibrary
 {
     public class BoardMemento : IMemento
     {
@@ -25,7 +19,9 @@ namespace TicTacToeClassLibrary
             int rows = state.GetLength(0);
             int columns = state.GetLength(1);
             string[,] copy = new string[rows, columns];
+
             Array.Copy(state, copy, state.Length);
+
             return copy;
         }
     }
